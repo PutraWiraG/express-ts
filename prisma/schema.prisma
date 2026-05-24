@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                  String      @id @default(uuid())
+  name                String
+  email               String      @unique
+  registration_date   DateTime    @default(now())
+
+  borrowings          Borrowing[]
+
+  @@map("users")
+}
+
+model Book {
+  id                  String      @id @default(uuid())
+  title               String
+  writer              String
+  stock               Int
+
+  borrowings          Borrowing[]
+
+  @@map("books")
+}
+
+enum BorrowingStatus {
+  BORROW
+  RETURN
+}
+
+model Borrowing {
+  id            String            @id @default(uuid())
+  borrow_date   DateTime          @default(now())
+  return_date   DateTime
+  status        BorrowingStatus   @default(BORROW)
+
+  userId       String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  bookId       String
+  book Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+
+  @@map("borrowings") 
+}
+
