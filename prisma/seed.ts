@@ -9,7 +9,7 @@ const adapter = new PrismaPg({
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  console.log('🌱 Seeding users...');
+  console.log('🌱 Seeding users, book...');
 
   await prisma.user.createMany({
     data: [
@@ -28,6 +28,26 @@ async function main() {
     ],
     skipDuplicates: true, // biar tidak error kalau email sama
   });
+
+  await prisma.book.createMany({
+    data: [
+      {
+        title: 'Buku 1',
+        writer: 'Penulis 1',
+        stock: 20
+      },
+      {
+        title: 'Buku 2',
+        writer: 'Penulis 2',
+        stock: 20
+      },
+      {
+        title: 'Buku 3',
+        writer: 'Penulis 3',
+        stock: 20
+      },
+    ]
+  })
 
   console.log('✅ Seeding selesai!');
 }

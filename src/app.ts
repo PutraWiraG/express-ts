@@ -4,6 +4,7 @@ import cors from "cors";
 import 'dotenv/config';
 import { checkConnection } from './config/database.js';
 import routes from "./routes/index.js";
+import { errorHandler } from './middlewares/error.middleware.js';
 
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
@@ -16,8 +17,8 @@ app.use(cors({
 }));
 
 app.use(express.json());
-app.use('/api', routes);
 app.use(express.urlencoded({extended: true}));
+app.use('/api', routes);
 
 app.get('/test-api', (req: Request, res: Response) => {
     res.status(200).json({
@@ -42,6 +43,8 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
     message: err.message || 'Internal Server Error',
   });
 });
+
+app.use(errorHandler);
 
 checkConnection().then(() => {
     app.listen(PORT, () => {
